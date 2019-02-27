@@ -5,14 +5,31 @@ import cv2
 import os
 from skimage import io, color, transform
 import json
+import argparse
 
+# constrct the argument parser
+ap = argparse.ArgumentParser()
+ap.add_argument("-x", "--x_path", required = False, default="test/", help="Path to IMAGE folder.")
+ap.add_argument("-y", "--y_path", required = False, default="y_test.json", help="Path to JSON file with image info.")
+ap.add_argument("-p", "--prefix", required = False, default="", help="Give new name for files, or leave blank to keep the orginal names.")
+ap.add_argument("-d", "--dimensions", required = False, default=(256, 256), help = "Set image dimensions. If empty images will be in (256, 256) size")
+ap.add_argument("-compress", "--compress", required=False, default=True, help = "Set to False in order to avoid (gzip) compression inside hdf5")
+ap.add_argument("-sf", "--save_to_file", required=False, default="data.hdf5", help=  "Name of the output HDF5 file with images")
+ap.add_argument("-img", "image_type", required=False, default="", help = "Include only files specific filetype (ie. jpg). default is: '' - all files")
+args = vars(ap.parse_args())
 
-DATAFILENAME = "data.hdf5"
-IMAGE_DIR_PATH = "test/"
+# Link constants to input vars
+DATAFILENAME = args['save_to_file']
+IMAGE_DIR_PATH = args['x_path']
+IMG_DIMS = args['dimensions']
+Y_FILE_PATH = args['y_path']
+FILE_PREFIX = args['prefix']
+FILE_TYPE = args['image_type']
+COMPRESS = args['compress']
+
 IMAGE_DESCRIPTION_PATH = "None" #json file, if none just save image without descriptions
 file_prefix = 'None' #if none save the same as file name, else rename to prefix and count1
 file_type = "None" #try to load all images, else load only specific file type
-IMG_DIMS = (256, 256)
 path_to_json_file = "data_dict.json"
 
 
@@ -51,7 +68,7 @@ def get_image_info(filename, decriptions_dict=None):
 
 
 
-def main(path_to_dir, img_dims = (256, 256), file_prefix="", database_name = DATAFILENAME):
+def main(image_dir_path = IMAGE_DIR_PATH, img_dims = IMG_DIMS, file_prefix=FILE_PREFIX, datafilename = DATAFILENAME):
     """This function saves hdf5 file of processed images to base directory
     If the file already exists it is overwritten.
     
@@ -65,16 +82,16 @@ def main(path_to_dir, img_dims = (256, 256), file_prefix="", database_name = DAT
     returns:
         saves the hdf5 file in base directory. the file is named database_name.
     """
-    filenames = get_filenames(path_to_dir)
-    with open(path_to_json_file) as jf:
+    filenames = get_filenames(IMAGE_DIR_PATH)
+    with open(Y_FILE_PATH) as jf:
         img_desciprtion = json.load(jf)
 
     original_filenames = {}
     file_counter = 0
     
-    with h5py.File(database_name, 'w') as f:
+    with h5py.File(DATAFILENAME, 'w') as f:
         for filename in filenames:
-            data = prepare_image(path_to_dir+filename, img_dims)
+            data = prepare_image(IMAGE_DIR_PATH+filename, IMG_DIMS)
             description = get_image_info(filename, img_desciprtion)
             
             if file_prefix != "":
