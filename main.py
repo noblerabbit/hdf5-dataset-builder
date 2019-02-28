@@ -15,7 +15,7 @@ ap.add_argument("-p", "--prefix", required = False, default="", help="Give new n
 ap.add_argument("-d", "--dimensions", required = False, default=(256, 256), help = "Set image dimensions. If empty images will be in (256, 256) size")
 ap.add_argument("-compress", "--compress", required=False, default=True, help = "Set to False in order to avoid (gzip) compression inside hdf5")
 ap.add_argument("-sf", "--save_to_file", required=False, default="data.hdf5", help=  "Name of the output HDF5 file with images")
-ap.add_argument("-img", "image_type", required=False, default="", help = "Include only files specific filetype (ie. jpg). default is: '' - all files")
+ap.add_argument("-img", "--image_type", required=False, default="", help = "Include only files specific filetype (ie. jpg). default is: '' - all files")
 args = vars(ap.parse_args())
 
 # Link constants to input vars
@@ -56,19 +56,18 @@ def prepare_image(image_path, img_dims):
     img = cv2.resize(img, img_dims)
     return img
 
-def get_image_info(filename, decriptions_dict=None):
+# def prepare_y_as_image(image_path)
+
+def get_image_info(filename, image_info_dict=None):
     """Lookup in jason file for image dict and return description
     for specific file name
     """
-    if decriptions_dict == None:
+    if image_info_dict == None:
         return ""
-    # return decriptions_dict[filename]
-    # return "Basic image descipriton"
-    return 10000
+    return image_info_dict[filename]
 
 
-
-def main(image_dir_path = IMAGE_DIR_PATH, img_dims = IMG_DIMS, file_prefix=FILE_PREFIX, datafilename = DATAFILENAME):
+def main():
     """This function saves hdf5 file of processed images to base directory
     If the file already exists it is overwritten.
     
@@ -88,39 +87,45 @@ def main(image_dir_path = IMAGE_DIR_PATH, img_dims = IMG_DIMS, file_prefix=FILE_
 
     original_filenames = {}
     file_counter = 0
+    image_information = {}
     
     with h5py.File(DATAFILENAME, 'w') as f:
         for filename in filenames:
             data = prepare_image(IMAGE_DIR_PATH+filename, IMG_DIMS)
             description = get_image_info(filename, img_desciprtion)
             
-            if file_prefix != "":
+            if FILE_PREFIX != "":
                 new_filename = file_prefix+str(file_counter)
                 original_filenames[new_filename] = filename
                 filename = new_filename
             
             # save image (X)
             ff = f.create_dataset(filename, data=data, compression='gzip', dtype='i1')
-            ff.attrs["Y"] = 1
+            ff.attrs["category"] = description['category']
+            ff.attrs["class"] = description['class']
+            
             file_counter +=1
             # save image description (Y)
-            description = np.string_("Hello asshole")
-            f.create_dataset(filename+"_desc", data=description)
+            # description = np.string_("Hello asshole")
+            # f.create_dataset(filename+"_desc", data=description)
+            
+            #fill image inforation dict
+            # print(description['category'])
+            image_information[filename] = {"category":description['category'], "class":description['class']}
             
         if len(original_filenames): 
             f.create_dataset('original_filenames', data=json.dumps(original_filenames))
         
-    with h5py.File(database_name, 'r') as f:
-        for key in f.keys():
-            print(key)
-        dset = f['flowers-macro-sunflowers-46216.jpg']
+    # with h5py.File(DATAFILENAME, 'r') as f:
+        # for key in f.keys():
+            # print(key)
+        # dset = f['flowers-macro-sunflowers-46216.jpg']
         # data1 = data[:]
-        print(dset[()])
-        print(dset.attrs['Y'])
-            
-            
+        # print(dset[()])
+        # print(dset.attrs['class'])
+
 
 if __name__ == '__main__':
     tic = time.time()
-    main(IMAGE_DIR_PATH)
+    main()
     print("It took {} seconds to create a database".format(time.time()-tic))
