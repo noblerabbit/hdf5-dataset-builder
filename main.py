@@ -19,6 +19,7 @@ ap.add_argument("-sf", "--save_to_file", required=False, default="data.hdf5", he
 ap.add_argument("-img", "--image_type", required=False, default="", help = "Include only files specific filetype (ie. jpg). default is: '' - all files")
 args = vars(ap.parse_args())
 
+
 # Link constants to input vars
 DATAFILENAME = args['save_to_file']
 IMAGE_DIR_PATH = args['x_path']
@@ -55,10 +56,15 @@ def get_image_info(filename, image_info_dict=None):
     return image_info_dict[filename]
     
 
-def main():
+def main(processing_function):
     """App entry point."""
+    print("HDF5 Database Builder for Deep Learning")
     
     filenames = get_filenames(IMAGE_DIR_PATH)
+    print("[INFO] Scanning folder {}".format(IMAGE_DIR_PATH))
+    print("[INFO] Image Processing function: {}".format(processing_function))
+    print("[INFO] Detected {} files".format(len(filenames)))
+    
     with open(Y_FILE_PATH) as jf:
         img_desciprtion = json.load(jf)
 
@@ -67,9 +73,14 @@ def main():
     image_information = {}
     
     with h5py.File(DATAFILENAME, 'w') as f:
+
         for filename in filenames:
-            x, y, rgb = customxy.prepare_x_and_y(IMAGE_DIR_PATH+filename, IMG_DIMS)
-            description = get_image_info(filename, img_desciprtion)
+            if (file_counter % 10 == 0):
+                print("[INFO] Processing {}-th image.".format(file_counter))
+                
+            # x, y, rgb = customxy.prepare_x_and_y(IMAGE_DIR_PATH+filename, IMG_DIMS)
+            x, y, rgb = processing_function(IMAGE_DIR_PATH+filename, IMG_DIMS)
+            # description = get_image_info(filename, img_desciprtion)
 
             new_filename = X_FILE_PREFIX+str(file_counter)
             original_filenames[new_filename] = filename
@@ -92,6 +103,7 @@ def main():
 
 
 if __name__ == '__main__':
+    
     tic = time.time()
-    main()
-    print("It took {} seconds to create a database".format(time.time()-tic))
+    main(customxy.prepare_x_and_y)
+    print("\nIt took {} seconds to create a database".format(time.time()-tic))
