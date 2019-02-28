@@ -5,6 +5,7 @@ import cv2
 import os
 from skimage import io, color, transform
 import json
+import customxy
 import argparse
 
 # constrct the argument parser
@@ -23,64 +24,40 @@ DATAFILENAME = args['save_to_file']
 IMAGE_DIR_PATH = args['x_path']
 IMG_DIMS = args['dimensions']
 Y_FILE_PATH = args['y_path']
-FILE_PREFIX = args['prefix']
+X_FILE_PREFIX = "X"
+Y_FILE_PREFIX = "Y"
 FILE_TYPE = args['image_type']
 COMPRESS = args['compress']
-
-IMAGE_DESCRIPTION_PATH = "None" #json file, if none just save image without descriptions
-file_prefix = 'None' #if none save the same as file name, else rename to prefix and count1
-file_type = "None" #try to load all images, else load only specific file type
-path_to_json_file = "data_dict.json"
 
 
 #get array of filenames
 def get_filenames(folder_path, file_type=""):
     """Returns list of filenames in the folder_path.
-    Ommits hidden files in the folder.
-
-    params:
-        @file_type: what type of files to include
-                    if "" - all files
-                    if "jpg" anly jpg files
-    returns: list of filenames
-    """
+    Ommits hidden files in the folder. """
+    
     return [file for file in os.listdir(folder_path) if not file.startswith(".") and file.endswith(file_type)]
 
 def prepare_image(image_path, img_dims):
     """Method takes in path to the image and desired image dimensions
     and reutrns resized image in a numpy array"""
-    # img = io.imread(image_path)
-    # img = transform.resize(img, img_dims)
+    
     img = cv2.imread(image_path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = cv2.resize(img, img_dims)
     return img
 
-# def prepare_y_as_image(image_path)
-
 def get_image_info(filename, image_info_dict=None):
     """Lookup in jason file for image dict and return description
-    for specific file name
-    """
+    for specific file name"""
+    
     if image_info_dict == None:
         return ""
     return image_info_dict[filename]
-
+    
 
 def main():
-    """This function saves hdf5 file of processed images to base directory
-    If the file already exists it is overwritten.
+    """App entry point."""
     
-    params:
-        @path_to_dir: path to image directory
-        @img_dims: tupple of final image width and heght
-        @file_prefix: the basename for new image
-                      if empty string '' it saves under original filename
-        @databse_name: the name of the output hdf5 file
-    
-    returns:
-        saves the hdf5 file in base directory. the file is named database_name.
-    """
     filenames = get_filenames(IMAGE_DIR_PATH)
     with open(Y_FILE_PATH) as jf:
         img_desciprtion = json.load(jf)
@@ -91,38 +68,27 @@ def main():
     
     with h5py.File(DATAFILENAME, 'w') as f:
         for filename in filenames:
-            data = prepare_image(IMAGE_DIR_PATH+filename, IMG_DIMS)
+            x, y, rgb = customxy.prepare_x_and_y(IMAGE_DIR_PATH+filename, IMG_DIMS)
             description = get_image_info(filename, img_desciprtion)
-            
-            if FILE_PREFIX != "":
-                new_filename = file_prefix+str(file_counter)
-                original_filenames[new_filename] = filename
-                filename = new_filename
+
+            new_filename = X_FILE_PREFIX+str(file_counter)
+            original_filenames[new_filename] = filename
+            original_filename = filename
+            filename = new_filename
             
             # save image (X)
-            ff = f.create_dataset(filename, data=data, compression='gzip', dtype='i1')
-            ff.attrs["category"] = description['category']
-            ff.attrs["class"] = description['class']
+            ff = f.create_dataset(filename+"_RGB", data=rgb, compression='gzip')
+            f.create_dataset(filename, data=x, compression='gzip')
+            f.create_dataset(Y_FILE_PREFIX+str(file_counter), data=y, compression='gzip')
+            
+            # save original name attribute
+            ff.attrs["original_filename"] = original_filename
             
             file_counter +=1
-            # save image description (Y)
-            # description = np.string_("Hello asshole")
-            # f.create_dataset(filename+"_desc", data=description)
             
-            #fill image inforation dict
-            # print(description['category'])
-            image_information[filename] = {"category":description['category'], "class":description['class']}
+            # image_information[filename] = {"category":description['category'], "class":description['class']}
             
-        if len(original_filenames): 
-            f.create_dataset('original_filenames', data=json.dumps(original_filenames))
-        
-    # with h5py.File(DATAFILENAME, 'r') as f:
-        # for key in f.keys():
-            # print(key)
-        # dset = f['flowers-macro-sunflowers-46216.jpg']
-        # data1 = data[:]
-        # print(dset[()])
-        # print(dset.attrs['class'])
+        f.create_dataset('original_filenames', data=json.dumps(original_filenames))
 
 
 if __name__ == '__main__':
