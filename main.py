@@ -10,7 +10,7 @@ import argparse
 
 # constrct the argument parser
 ap = argparse.ArgumentParser()
-ap.add_argument("-x", "--x_path", required = False, default="test/", help="Path to IMAGE folder.")
+ap.add_argument("-x", "--x_path", required = False, default="test_images/", help="Path to IMAGE folder.")
 ap.add_argument("-y", "--y_path", required = False, default="y_test.json", help="Path to JSON file with image info.")
 ap.add_argument("-p", "--prefix", required = False, default="", help="Give new name for files, or leave blank to keep the orginal names.")
 ap.add_argument("-d", "--dimensions", required = False, default=(256, 256), help = "Set image dimensions. If empty images will be in (256, 256) size")
