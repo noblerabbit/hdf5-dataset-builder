@@ -44,12 +44,12 @@ def get_filenames(folder_path, file_type=""):
 
 def main(processing_function):
     """App entry point."""
-    print("HDF5 Database Builder for Deep Learning")
+    # print("HDF5 Database Builder for Deep Learning")
     
     filenames = get_filenames(IMAGE_DIR_PATH)
     print("[INFO] Scanning folder {}".format(IMAGE_DIR_PATH))
-    print("[INFO] Image Processing function: {}".format(processing_function))
-    print("[INFO] Detected {} files".format(len(filenames)))
+    # print("[INFO] Image Processing function: {}".format(processing_function))
+    print("[INFO] Detected {} files\n".format(len(filenames)))
     
     # with open(Y_FILE_PATH) as jf:
     #     img_desciprtion = json.load(jf)
@@ -65,6 +65,9 @@ def main(processing_function):
                 
             processed_image_data = processing_function(IMAGE_DIR_PATH+filename, IMG_DIMS)
             
+            if processed_image_data == {}:
+                continue
+                
             # save data dict to dataset
             for key in processed_image_data.keys():
                 f.create_dataset(key+"_"+str(file_counter), data=processed_image_data[key], compression='gzip')
@@ -74,13 +77,18 @@ def main(processing_function):
             file_counter += 1
 
         f.create_dataset('original_filenames_mapping', data=json.dumps(filenames_mapping))
+        
+        # creating a dataset with builder information
+        f.create_dataset('hdf5-image-dataset-builder-signature', data=json.dumps({"signature":"version1"}))
+    
+    print("\n[INFO][SUMMARY] Stored {} images in {} file.".format(file_counter,DATAFILENAME))
 
 
 if __name__ == '__main__':
 
-    print("HDF5 Dataset Image Builder\n")
-    print("Custom processing function: {}\n".format(PROC_FUNC))
-    
+    print("\nHDF5 Dataset Image Builder\n")
+    print("Image processing function: {}\n".format(PROC_FUNC))
+    print ("[NOTE] All Image procesing functions must be defined in customxy.py\n")
     tic = time.time()
     main(getattr(customxy, PROC_FUNC))
-    print("\nIt took {} seconds to create a database".format(round(time.time()-tic)))
+    print("\n[INFO] It took {} seconds to create the dataset".format(round(time.time()-tic)))

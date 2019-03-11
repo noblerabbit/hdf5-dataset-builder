@@ -10,9 +10,14 @@ def prepare_x_and_y(image_path, img_dim=(256,256)):
     adjust the image dimensions converts image to LAB format
     and returns dict with three keys: X (LAB L), Y (LAB ab), and resized RGB.
     """
-    rgb = cv2.imread(image_path)
-    rgb = cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB)
-    rgb = cv2.resize(rgb, img_dim)
+    try:
+        rgb = cv2.imread(image_path)
+        rgb = cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB)
+        rgb = cv2.resize(rgb, img_dim)
+        
+    except:
+        print("[INFO][WARNING] Unable to process {} as image".format(image_path))
+        return {}
     
     lab = color.rgb2lab(rgb).astype(np.float32)
     L = lab[:,:,0] = 2 * lab[:,:,0]/100 - 1 # X
