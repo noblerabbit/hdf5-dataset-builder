@@ -98,5 +98,5 @@ if __name__ == '__main__':
     
     tic = time.time()
     main(getattr(customxy, PROC_FUNC))
-    print("[INFO] It took {} seconds to create the dataset.".format(round(time.time()-tic)))
+    print("[SUMMARY] It took {} seconds to create the dataset.".format(round(time.time()-tic)))
     print(line)
