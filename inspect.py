@@ -3,8 +3,13 @@
 
 import h5py
 import os
+import argparse
 
-DATASET_PATH = "test_hdf5_data/test_data.hdf5"
+ap = argparse.ArgumentParser()
+ap.add_argument("-f", "--file_path", required = False, default="test_hdf5_data/test_data.hdf5", help="Path HDF5 image datafile.")
+args = vars(ap.parse_args())
+
+DATASET_PATH = args["file_path"]
 
 EXCLUDE_DATASETS = ["hdf5-image-dataset-builder-signature", "original_filenames_mapping"]
 PROP_DATASETS = len(EXCLUDE_DATASETS)
@@ -20,9 +25,10 @@ def inspect(DATASET=DATASET_PATH):
             print("Dataset was not created with the tool.")
             return -1
         print(line)
-        print("HDF5 Dataset Image Builder\nSignature found.")
+        print("HDF5 Dataset Image Builder Inspect Tool\n")
         print("Dataset name: {}".format(DATASET_PATH.split("/")[-1]))
-        print("Dataset size: {} MB".format(os.path.getsize(DATASET_PATH)/1000000))
+        print("Dataset size: {} MB".format(round(os.path.getsize(DATASET_PATH)/1000000)))
+        print("\n*File Signature found.*\n")
         print(line)
 
         #loook all datasets and sort them
