@@ -1,18 +1,15 @@
 import os
 import cv2
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from skimage import io, color, transform
 import numpy as np
 
 
 def prepare_x_and_y(image_path, img_dim=(256,256)):
-    """Takes in image_path (path to the RGB image) and returns the image in LAB format
-    with L chnallel as X, and ab channels as Y.
-    It also returns processed rgb image as rgb.e
+    """Takes in image_path (path to the RGB image) of the image,
+    adjust the image dimensions converts image to LAB format
+    and returns dict with three keys: X (LAB L), Y (LAB ab), and resized RGB.
     """
-    # rgb = io.imread(image_path)
-    # rgb = transform.resize(rgb, img_dim)
-    
     rgb = cv2.imread(image_path)
     rgb = cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB)
     rgb = cv2.resize(rgb, img_dim)
@@ -21,4 +18,4 @@ def prepare_x_and_y(image_path, img_dim=(256,256)):
     L = lab[:,:,0] = 2 * lab[:,:,0]/100 - 1 # X
     ab = lab[:,:,1:] = lab[:, :, 1:] / 127 # Y
     
-    return L, ab, rgb
+    return {"X": L, "Y" : ab, "RGB" : rgb}

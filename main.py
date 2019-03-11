@@ -8,15 +8,17 @@ import json
 import customxy
 import argparse
 
-# constrct the argument parser
+ # constrct the argument parser
 ap = argparse.ArgumentParser()
 ap.add_argument("-x", "--x_path", required = False, default="test_images/", help="Path to IMAGE folder.")
-ap.add_argument("-y", "--y_path", required = False, default="y_test.json", help="Path to JSON file with image info.")
-ap.add_argument("-p", "--prefix", required = False, default="", help="Give new name for files, or leave blank to keep the orginal names.")
+# ap.add_argument("-y", "--y_path", required = False, default="y_test.json", help="Path to JSON file with image info.")
+# ap.add_argument("-p", "--prefix", required = False, default="", help="Give new name for files, or leave blank to keep the orginal names.")
 ap.add_argument("-d", "--dimensions", required = False, default=(256, 256), help = "Set image dimensions. If empty images will be in (256, 256) size")
 ap.add_argument("-compress", "--compress", required=False, default=True, help = "Set to False in order to avoid (gzip) compression inside hdf5")
-ap.add_argument("-sf", "--save_to_file", required=False, default="data.hdf5", help=  "Name of the output HDF5 file with images")
+ap.add_argument("-sf", "--save_to_file", required=False, default="test_hdf5_data/test_data.hdf5", help=  "Name of the output HDF5 file with images")
 ap.add_argument("-img", "--image_type", required=False, default="", help = "Include only files specific filetype (ie. jpg). default is: '' - all files")
+ap.add_argument("-func", "--proc_func", required=False, default="prepare_x_and_y", help= "Function to the  process images.")
+
 args = vars(ap.parse_args())
 
 
@@ -24,12 +26,12 @@ args = vars(ap.parse_args())
 DATAFILENAME = args['save_to_file']
 IMAGE_DIR_PATH = args['x_path']
 IMG_DIMS = args['dimensions']
-Y_FILE_PATH = args['y_path']
-X_FILE_PREFIX = "X"
-Y_FILE_PREFIX = "Y"
+# Y_FILE_PATH = args['y_path']
+# X_FILE_PREFIX = "X"
+# Y_FILE_PREFIX = "Y"
 FILE_TYPE = args['image_type']
 COMPRESS = args['compress']
-
+PROC_FUNC = args['proc_func']
 
 #get array of filenames
 def get_filenames(folder_path, file_type=""):
@@ -38,23 +40,7 @@ def get_filenames(folder_path, file_type=""):
     
     return [file for file in os.listdir(folder_path) if not file.startswith(".") and file.endswith(file_type)]
 
-def prepare_image(image_path, img_dims):
-    """Method takes in path to the image and desired image dimensions
-    and reutrns resized image in a numpy array"""
-    
-    img = cv2.imread(image_path)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img = cv2.resize(img, img_dims)
-    return img
-
-def get_image_info(filename, image_info_dict=None):
-    """Lookup in jason file for image dict and return description
-    for specific file name"""
-    
-    if image_info_dict == None:
-        return ""
-    return image_info_dict[filename]
-    
+# TODO explore dataset after creation function and print out the summary
 
 def main(processing_function):
     """App entry point."""
@@ -65,12 +51,11 @@ def main(processing_function):
     print("[INFO] Image Processing function: {}".format(processing_function))
     print("[INFO] Detected {} files".format(len(filenames)))
     
-    with open(Y_FILE_PATH) as jf:
-        img_desciprtion = json.load(jf)
+    # with open(Y_FILE_PATH) as jf:
+    #     img_desciprtion = json.load(jf)
 
-    original_filenames = {}
+    filenames_mapping = {}
     file_counter = 0
-    image_information = {}
     
     with h5py.File(DATAFILENAME, 'w') as f:
 
@@ -78,33 +63,24 @@ def main(processing_function):
             if (file_counter % 10 == 0):
                 print("[INFO] Processing {}-th image.".format(file_counter))
                 
-            # x, y, rgb = customxy.prepare_x_and_y(IMAGE_DIR_PATH+filename, IMG_DIMS)
-            x, y, rgb = processing_function(IMAGE_DIR_PATH+filename, IMG_DIMS)
-            # description = get_image_info(filename, img_desciprtion)
+            processed_image_data = processing_function(IMAGE_DIR_PATH+filename, IMG_DIMS)
+            
+            # save data dict to dataset
+            for key in processed_image_data.keys():
+                f.create_dataset(key+"_"+str(file_counter), data=processed_image_data[key], compression='gzip')
+        
+            filenames_mapping[str(file_counter)] = filename
+            
+            file_counter += 1
 
-            new_filename = X_FILE_PREFIX+str(file_counter)
-            original_filenames[new_filename] = filename
-            original_filename = filename
-            filename = new_filename
-            
-            # save image (X)
-            ff = f.create_dataset("RGB_"+filename, data=rgb, compression='gzip')
-            f.create_dataset(filename, data=x, compression='gzip')
-            f.create_dataset(Y_FILE_PREFIX+str(file_counter), data=y, compression='gzip')
-            
-            # save original name attribute
-            ff.attrs["original_filename"] = original_filename
-            ff.attrs["info"] = "Renamed and resized to equal dimensons."
-            
-            file_counter +=1
-            
-            # image_information[filename] = {"category":description['category'], "class":description['class']}
-            
-        f.create_dataset('original_filenames', data=json.dumps(original_filenames))
+        f.create_dataset('original_filenames_mapping', data=json.dumps(filenames_mapping))
 
 
 if __name__ == '__main__':
+
+    print("HDF5 Dataset Image Builder\n")
+    print("Custom processing function: {}\n".format(PROC_FUNC))
     
     tic = time.time()
-    main(customxy.prepare_x_and_y)
-    print("\nIt took {} seconds to create a database".format(time.time()-tic))
+    main(getattr(customxy, PROC_FUNC))
+    print("\nIt took {} seconds to create a database".format(round(time.time()-tic)))
