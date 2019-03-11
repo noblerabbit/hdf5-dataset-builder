@@ -16,7 +16,7 @@ def prepare_x_and_y(image_path, img_dim=(256,256)):
         rgb = cv2.resize(rgb, img_dim)
         
     except:
-        print("[INFO][WARNING] Unable to process {} as image".format(image_path))
+        print("[WARNING] Unable to process {} as image".format(image_path))
         return {}
     
     lab = color.rgb2lab(rgb).astype(np.float32)

@@ -49,7 +49,8 @@ def main(processing_function):
     filenames = get_filenames(IMAGE_DIR_PATH)
     print("[INFO] Scanning folder {}".format(IMAGE_DIR_PATH))
     # print("[INFO] Image Processing function: {}".format(processing_function))
-    print("[INFO] Detected {} files\n".format(len(filenames)))
+    print("[INFO] Detected {} files".format(len(filenames)))
+    print(line)
     
     # with open(Y_FILE_PATH) as jf:
     #     img_desciprtion = json.load(jf)
@@ -81,14 +82,21 @@ def main(processing_function):
         # creating a dataset with builder information
         f.create_dataset('hdf5-image-dataset-builder-signature', data=json.dumps({"signature":"version1"}))
     
-    print("\n[INFO][SUMMARY] Stored {} images in {} file.".format(file_counter,DATAFILENAME))
+    print(line)
+    print("[SUMMARY] Stored {} images in {} file.".format(file_counter,DATAFILENAME))
 
 
 if __name__ == '__main__':
 
-    print("\nHDF5 Dataset Image Builder\n")
-    print("Image processing function: {}\n".format(PROC_FUNC))
+    line = "========================================================"
+    print(line)
+    print("HDF5 Dataset Image Builder\n")
+    print("Image processing function: {}".format(PROC_FUNC))
+    print("Image type: {}".format(FILE_TYPE if FILE_TYPE!="" else "All supported image formats."))
     print ("[NOTE] All Image procesing functions must be defined in customxy.py\n")
+    print(line)
+    
     tic = time.time()
     main(getattr(customxy, PROC_FUNC))
-    print("\n[INFO] It took {} seconds to create the dataset".format(round(time.time()-tic)))
+    print("[INFO] It took {} seconds to create the dataset.".format(round(time.time()-tic)))
+    print(line)
