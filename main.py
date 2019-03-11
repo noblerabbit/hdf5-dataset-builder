@@ -88,12 +88,13 @@ def main(processing_function):
             filename = new_filename
             
             # save image (X)
-            ff = f.create_dataset(filename+"_RGB", data=rgb, compression='gzip')
+            ff = f.create_dataset("RGB_"+filename, data=rgb, compression='gzip')
             f.create_dataset(filename, data=x, compression='gzip')
             f.create_dataset(Y_FILE_PREFIX+str(file_counter), data=y, compression='gzip')
             
             # save original name attribute
             ff.attrs["original_filename"] = original_filename
+            ff.attrs["info"] = "Renamed and resized to equal dimensons."
             
             file_counter +=1
             
