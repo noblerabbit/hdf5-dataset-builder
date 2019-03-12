@@ -41,19 +41,24 @@ $ python inspect_file.py
 * **-i** (which image type to include. ie. ".jpg"; default: "" - all images)
 * **-s** (path where to store hdf5 datafile; default: "test_hdf5_data/test_data.hdf5")
 
-    > $ python main.py -x "test_images/"
+```
+    $ python main.py -x "test_images/"
+```
+
 
 **inspect_file.py (python inspect_file.py)**
 * -f (provide path to hdft file for analysis: default: "test_hdf5_data/test_data.hdf5")
-
-    > $ python inspect_file.py -f "test_hdf5_data/test_data.hdf5"
-
+```
+    $ python inspect_file.py -f "test_hdf5_data/test_data.hdf5"
+```
 ### Processing Functions
 Functions that dictate the output dictionary which contains processed image data to be stored to the hdf5 file. They are defined in "customxy.py".
 
 #### Current custom functions: ####
 
+
 **1. prepare_x_and_y**
+
 Takes in RGB image, resizes the image, converts it to LAB format and returns dict as LAB L channel ("X"), LAB ab channel ("X")
 and RGB resized image ("X").
 This function is useful to prepare date to train CNN to colorize grayscale images.
@@ -63,7 +68,9 @@ This function is useful to prepare date to train CNN to colorize grayscale image
 $ python main.py -f prepare_x_and_y
 ```
 
+
 **2. resize_image**
+
 Takes in RGB image, resizes the image and returns it as "RGB" key in the dictionary.
 
 **In the terminal:**
