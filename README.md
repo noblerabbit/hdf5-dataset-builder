@@ -5,7 +5,7 @@
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
 **Use this script if you want to store images from a folder into a single dataset file. You can also modify images before storing them in the dataset file.
-Great way to quickly create X,Y datasets for deep learning.**
+Great way also to quickly create X,Y datasets for deep learning.**
 
 ### Desciption
 This scripts reads images from folder and procresses them through the custom processing function and stores them in a HDF5 file.
@@ -24,10 +24,10 @@ without modification of the rest of the code. The outoup of processing function 
 3. run *"python main.py"* to generate sample hdf5 dataset file
 4. run *"python inspect_file.py"* to get summary from the hdf5 dataset file
 
-**In terminal**
+**In the terminal:**
 ```
 $ git clone https://github.com/noblerabbit/hdf5-dataset-builder.git
-$ cd noblerabbit/hdf5-dataset-builder
+$ cd hdf5-dataset-builder
 $ pip install requirements.txt
 $ python main.py
 $ python inspect_file.py
@@ -49,26 +49,32 @@ $ python inspect_file.py
     > $ python inspect_file.py -f "test_hdf5_data/test_data.hdf5"
 
 ### Processing Functions
-Functions that dictate the output dictionary that contains data which is stored to the hdf5 file. They are defined in customxy.py.
+Functions that dictate the output dictionary which contains processed image data to be stored to the hdf5 file. They are defined in "customxy.py".
 
-Current custom functions:
+#### Current custom functions: ####
+
 **1. prepare_x_and_y**
 Takes in RGB image, resizes the image, converts it to LAB format and returns dict as LAB L channel ("X"), LAB ab channel ("X")
 and RGB resized image ("X").
 This function is useful to prepare date to train CNN to colorize grayscale images.
 
-Demo:
-> $ python main.py -f prepare_x_and_y
+**In the terminal:**
+``` 
+$ python main.py -f prepare_x_and_y
+```
 
 **2. resize_image**
 Takes in RGB image, resizes the image and returns it as "RGB" key in the dictionary.
 
-Demo:
-> $ python main.py -r resize_image
+**In the terminal:**
+```
+ $ python main.py -r resize_image
+```
 
 ### TODO ###
 - [ ] Add option to parse subfolders
 - [ ] Custom function example to parse category from filename
+- [ ] Create custom function for categorical data (where Yi is name of category for each Xi)
 
 ### License
 [MIT](https://choosealicense.com/licenses/mit/)
