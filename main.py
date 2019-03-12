@@ -34,7 +34,6 @@ def get_filenames(folder_path, file_type=""):
     
     return [file for file in os.listdir(folder_path) if not file.startswith(".") and file.endswith(file_type)]
 
-# TODO explore dataset after creation function and print out the summary
 
 def main(processing_function):
     """App entry point."""
@@ -45,9 +44,6 @@ def main(processing_function):
     # print("[INFO] Image Processing function: {}".format(processing_function))
     print("[INFO] Detected {} files".format(len(filenames)))
     print(line)
-    
-    # with open(Y_FILE_PATH) as jf:
-    #     img_desciprtion = json.load(jf)
 
     filenames_mapping = {}
     file_counter = 0
