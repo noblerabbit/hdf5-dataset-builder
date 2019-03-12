@@ -8,6 +8,7 @@ import json
 import customxy
 import argparse
 from inspect_file import inspect_file
+import util
 
  # constrct the argument parser
 ap = argparse.ArgumentParser()
@@ -43,7 +44,7 @@ def main(processing_function):
     print("[INFO] Scanning folder {}".format(IMAGE_DIR_PATH))
     # print("[INFO] Image Processing function: {}".format(processing_function))
     print("[INFO] Detected {} files".format(len(filenames)))
-    print(line)
+    print(util.LINE)
 
     filenames_mapping = {}
     file_counter = 0
@@ -67,27 +68,26 @@ def main(processing_function):
             
             file_counter += 1
 
-        f.create_dataset('original_filenames_mapping', data=json.dumps(filenames_mapping))
+        f.create_dataset(util.ORIG_FILENAMES, data=json.dumps(filenames_mapping))
         
         # creating a dataset with builder information
-        f.create_dataset('hdf5-image-dataset-builder-signature', data=json.dumps({"signature":"version1"}))
+        f.create_dataset(util.SIGNATURE, data=json.dumps({"signature":util.VERSION}))
     
-    print(line)
+    print(util.LINE)
     print("[SUMMARY] Stored {} images in {} file.".format(file_counter,DATAFILENAME))
 
 
 if __name__ == '__main__':
 
-    line = "========================================================"
-    print(line)
+    print(util.LINE)
     print("HDF5 Dataset Image Builder\n")
     print("Image processing function: {}".format(PROC_FUNC))
     print("Image type: {}".format(FILE_TYPE if FILE_TYPE!="" else "All supported image formats."))
     print ("[NOTE] All Image procesing functions must be defined in customxy.py\n")
-    print(line)
+    print(util.LINE)
     
     tic = time.time()
     main(getattr(customxy, PROC_FUNC))
     print("[SUMMARY] It took {} seconds to create the dataset.".format(round(time.time()-tic)))
-    print(line)
+    print(util.LINE)
     inspect_file(DATAFILENAME)

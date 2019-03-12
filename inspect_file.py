@@ -4,19 +4,19 @@
 import h5py
 import os
 import argparse
+import util
 
-EXCLUDE_DATASETS = ["hdf5-image-dataset-builder-signature", "original_filenames_mapping"]
+EXCLUDE_DATASETS = [util.SIGNATURE, util.ORIG_FILENAMES]
 PROP_DATASETS = len(EXCLUDE_DATASETS)
 
 def inspect_file(DATASET):
-    line = "============================================="
     d = {}
 
     with h5py.File(DATASET, 'r') as f:
         #check for signature
         dataset_keys = f.keys()
 
-        print(line)
+        print(util.LINE)
         print("HDF5 Dataset Image Builder Inspect Tool\n")
         print("Dataset name: {}".format(DATASET.split("/")[-1]))
         print("Dataset size: {} MB".format(round(os.path.getsize(DATASET)/1000000)))
@@ -26,7 +26,7 @@ def inspect_file(DATASET):
             return -1
         
         print("\n*File Signature found.*\n")
-        print(line)
+        print(util.LINE)
 
         #loook all datasets and sort them
         
@@ -43,7 +43,7 @@ def inspect_file(DATASET):
             
         print("Total number of image datasets: {}".format(len(dataset_keys)-PROP_DATASETS))
         print("One example of dataset name: '{}' ".format(list(dataset_keys)[int(len(dataset_keys)/2)]))
-        print(line)
+        print(util.LINE)
                 
             
 if __name__ == '__main__':

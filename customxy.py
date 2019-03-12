@@ -6,8 +6,8 @@ import numpy as np
 
 
 def prepare_x_and_y(image_path, img_dim=(256,256)):
-    """Takes in image_path (path to the RGB image) of the image,
-    adjust the image dimensions converts image to LAB format
+    """Takes in image_path (path to the RGB image),
+    adjust the image dimensions converts the image to LAB format
     and returns dict with three keys: X (LAB L), Y (LAB ab), and resized RGB.
     """
     try:
@@ -37,3 +37,12 @@ def resize_image(image_path, img_dim=(256,256)):
         return {}
         
     return {"RGB" : rgb}
+    
+    
+### PUT CUSTOM PROCESSING FUNCTIONS HERE
+
+# Look at the above examples for guidance.
+# Input params must be path to image, and image_dims
+# Output of the function must be in a python dictionary format.
+
+###
