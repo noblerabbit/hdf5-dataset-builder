@@ -24,3 +24,16 @@ def prepare_x_and_y(image_path, img_dim=(256,256)):
     ab = lab[:,:,1:] = lab[:, :, 1:] / 127 # Y
     
     return {"X": L, "Y" : ab, "RGB" : rgb}
+    
+def resize_image(image_path, img_dim=(256,256)):
+    """Resizes image and returns it in a dictionary"""
+    try:
+        rgb = cv2.imread(image_path)
+        rgb = cv2.cvtColor(rgb, cv2.COLOR_BGR2RGB)
+        rgb = cv2.resize(rgb, img_dim)
+        
+    except:
+        print("[WARNING] Unable to process {} as image.".format(image_path))
+        return {}
+        
+    return {"RGB" : rgb}

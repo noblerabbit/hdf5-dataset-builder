@@ -5,27 +5,21 @@ import h5py
 import os
 import argparse
 
-ap = argparse.ArgumentParser()
-ap.add_argument("-f", "--file_path", required = False, default="test_hdf5_data/test_data.hdf5", help="Path HDF5 image datafile.")
-args = vars(ap.parse_args())
-
-DATASET_PATH = args["file_path"]
-
 EXCLUDE_DATASETS = ["hdf5-image-dataset-builder-signature", "original_filenames_mapping"]
 PROP_DATASETS = len(EXCLUDE_DATASETS)
 
-def inspect(DATASET=DATASET_PATH):
+def inspect_file(DATASET):
     line = "============================================="
     d = {}
 
-    with h5py.File(DATASET_PATH, 'r') as f:
+    with h5py.File(DATASET, 'r') as f:
         #check for signature
         dataset_keys = f.keys()
 
         print(line)
         print("HDF5 Dataset Image Builder Inspect Tool\n")
-        print("Dataset name: {}".format(DATASET_PATH.split("/")[-1]))
-        print("Dataset size: {} MB".format(round(os.path.getsize(DATASET_PATH)/1000000)))
+        print("Dataset name: {}".format(DATASET.split("/")[-1]))
+        print("Dataset size: {} MB".format(round(os.path.getsize(DATASET)/1000000)))
         
         if not f[EXCLUDE_DATASETS[0]]:
             print("Dataset was not created with the tool.\n This tool only works with hdf5 files created with the builder.")
@@ -53,4 +47,9 @@ def inspect(DATASET=DATASET_PATH):
                 
             
 if __name__ == '__main__':
-    inspect()
+    
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-p", "--file_path", required = False, default="test_hdf5_data/test_data.hdf5", help="Path HDF5 image datafile.")
+    args = vars(ap.parse_args())
+
+    inspect_file(args["file_path"])

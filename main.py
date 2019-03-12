@@ -7,18 +7,15 @@ from skimage import io, color, transform
 import json
 import customxy
 import argparse
-import inspect_file
+from inspect_file import inspect_file
 
  # constrct the argument parser
 ap = argparse.ArgumentParser()
 ap.add_argument("-x", "--x_path", required = False, default="test_images/", help="Path to IMAGE folder.")
-# ap.add_argument("-y", "--y_path", required = False, default="y_test.json", help="Path to JSON file with image info.")
-# ap.add_argument("-p", "--prefix", required = False, default="", help="Give new name for files, or leave blank to keep the orginal names.")
 ap.add_argument("-d", "--dimensions", required = False, default=(256, 256), help = "Set image dimensions. If empty images will be in (256, 256) size")
-ap.add_argument("-compress", "--compress", required=False, default=True, help = "Set to False in order to avoid (gzip) compression inside hdf5")
-ap.add_argument("-sf", "--save_to_file", required=False, default="test_hdf5_data/test_data.hdf5", help=  "Name of the output HDF5 file with images")
-ap.add_argument("-img", "--image_type", required=False, default="", help = "Include only files specific filetype (ie. jpg). default is: '' - all files")
-ap.add_argument("-func", "--proc_func", required=False, default="prepare_x_and_y", help= "Function to the  process images.")
+ap.add_argument("-s", "--save_to_file", required=False, default="test_hdf5_data/test_data.hdf5", help=  "Name of the output HDF5 file with images")
+ap.add_argument("-i", "--image_type", required=False, default="", help = "Include only files specific filetype (ie. jpg). default is: '' - all files")
+ap.add_argument("-f", "--proc_func", required=False, default="prepare_x_and_y", help= "Function to the  process images.")
 
 args = vars(ap.parse_args())
 
@@ -27,11 +24,7 @@ args = vars(ap.parse_args())
 DATAFILENAME = args['save_to_file']
 IMAGE_DIR_PATH = args['x_path']
 IMG_DIMS = args['dimensions']
-# Y_FILE_PATH = args['y_path']
-# X_FILE_PREFIX = "X"
-# Y_FILE_PREFIX = "Y"
 FILE_TYPE = args['image_type']
-COMPRESS = args['compress']
 PROC_FUNC = args['proc_func']
 
 #get array of filenames
@@ -101,4 +94,4 @@ if __name__ == '__main__':
     main(getattr(customxy, PROC_FUNC))
     print("[SUMMARY] It took {} seconds to create the dataset.".format(round(time.time()-tic)))
     print(line)
-    inspect_file.inspect(DATAFILENAME)
+    inspect_file(DATAFILENAME)

@@ -24,34 +24,47 @@ without modification of the rest of the code. The outoup of processing function 
 3. run *"python main.py"* to generate sample hdf5 dataset file
 4. run *"python inspect_file.py"* to get summary from the hdf5 dataset file
 
-
 **In terminal**
-> git clone https://github.com/noblerabbit/hdf5-dataset-builder.git
-
-> cd noblerabbit/hdf5-dataset-builder
-
-> pip install requirements.txt
-
-> python main.py
-
-> python inspect_file.py
-
+```
+$ git clone https://github.com/noblerabbit/hdf5-dataset-builder.git
+$ cd noblerabbit/hdf5-dataset-builder
+$ pip install requirements.txt
+$ python main.py
+$ python inspect_file.py
+```
 
 ### Arguments ###
 **main.py (python main.py args)**
 * **-x** (Path to image folder; default:"test_images")
 * **-d** (tupple of width and height of the resized image; default: (256, 256)
-* **-func** (name of the processing function defined in customxy.py; default: "prepare_x_and_y")
-* **-img** (which image type to include. ie. ".jpg"; default: "" - all images)
-* **-sf** (path where to store hdf5 datafile; default: "test_hdf5_data/test_data.hdf5")
+* **-f** (name of the processing function defined in customxy.py; default: "prepare_x_and_y")
+* **-i** (which image type to include. ie. ".jpg"; default: "" - all images)
+* **-s** (path where to store hdf5 datafile; default: "test_hdf5_data/test_data.hdf5")
 
-    > python main.py -x "test_images/"
+    > $ python main.py -x "test_images/"
 
 **inspect_file.py (python inspect_file.py)**
 * -f (provide path to hdft file for analysis: default: "test_hdf5_data/test_data.hdf5")
 
-    > python inspect_file.py -f "test_hdf5_data/test_data.hdf5"
+    > $ python inspect_file.py -f "test_hdf5_data/test_data.hdf5"
 
+### Processing Functions
+Functions that dictate the output dictionary that contains data which is stored to the hdf5 file. They are defined in customxy.py.
+
+Current custom functions:
+**1. prepare_x_and_y**
+Takes in RGB image, resizes the image, converts it to LAB format and returns dict as LAB L channel ("X"), LAB ab channel ("X")
+and RGB resized image ("X").
+This function is useful to prepare date to train CNN to colorize grayscale images.
+
+Demo:
+> $ python main.py -f prepare_x_and_y
+
+**2. resize_image**
+Takes in RGB image, resizes the image and returns it as "RGB" key in the dictionary.
+
+Demo:
+> $ python main.py -r resize_image
 
 ### TODO ###
 - [ ] Add option to parse subfolders
