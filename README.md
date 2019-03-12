@@ -4,7 +4,7 @@
 ![Version: 1.0.2](https://img.shields.io/badge/version-1.0.0_-green.svg)
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
-**Use this script if you want to store images from a folder into a single hdf5 file. You also modify images before storing them in the dataset file.
+**Use this script if you want to store images from a folder into a single hdf5 file. You can modify images before storing them in the dataset file.
 Great way also to quickly create X,Y datasets for deep learning.**
 
 ### Desciption
@@ -14,7 +14,7 @@ HD5F is a file format that is optimized for fast access of the data from disk (m
 It also provides a neat way of transporting data as a single file. Great tutorial regarding HDF5 file format can be found at https://www.uetke.com/blog/python/how-to-use-hdf5-files-in-python/.
 
 *The main advantage of this script is that it enables custom processing functions to be integrated in the code
-without modification of the rest of the code. The output of the processing function must be a python dict but it can have  with arbitrary number keys. Look at 'customxy.py' for sample functions.*
+without modification of the rest of the code. The output of the processing function must be a python dict but it can have  arbitrary number keys. Look at 'customxy.py' for sample functions.*
 
 ### Instructions ###
 
@@ -36,7 +36,7 @@ $ python inspect_file.py
 ### Arguments ###
 **main.py (python main.py args)**
 * **-x** (Path to image folder; default:"test_images")
-* **-d** (tupple of width and height of the resized image; default: (256, 256)
+* **-d** (tuple of width and height of the resized image; default: (256, 256)
 * **-f** (name of the processing function defined in customxy.py; default: "prepare_x_and_y")
 * **-i** (which image type to include. ie. ".jpg"; default: "" - all images)
 * **-s** (path where to store hdf5 datafile; default: "test_hdf5_data/test_data.hdf5")
@@ -47,7 +47,7 @@ $ python inspect_file.py
 
 
 **inspect_file.py (python inspect_file.py)**
-* -f (provide path to hdft file for analysis: default: "test_hdf5_data/test_data.hdf5")
+* **-f** (provide path to hdft file for analysis: default: "test_hdf5_data/test_data.hdf5")
 ```
    example: $ python inspect_file.py -f "test_hdf5_data/test_data.hdf5"
 ```
