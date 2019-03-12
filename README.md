@@ -1,7 +1,13 @@
-# HDF5 Image Dataset Builder (V.1.0)
+# HDF5 Image Dataset Builder (BETA)
 
+![Price: free](https://img.shields.io/badge/price-FREE-0098f7.svg)
+![Version: 1.0.2](https://img.shields.io/badge/version-1.0.0_-green.svg)
+![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
+**Use this script if you want to store images from a folder into a single dataset file. You can also modify images before storing them in the dataset file.
+Great way to quickly create X,Y datasets for deep learning.**
 
+### Desciption
 This scripts reads images from folder and procresses them through the custom processing function and stores them in a HDF5 file.
 
 HD5F is a file format that is optimized for quickly reading data from the file into memory (faster than is we read filed from the folder on the disk).
@@ -32,7 +38,7 @@ without modification of the rest of the code. The outoup of processing function 
 
 
 ### Arguments ###
-**main.py (python main.py args):**
+**main.py (python main.py args)**
 * **-x** (Path to image folder; default:"test_images")
 * **-d** (tupple of width and height of the resized image; default: (256, 256)
 * **-func** (name of the processing function defined in customxy.py; default: "prepare_x_and_y")
