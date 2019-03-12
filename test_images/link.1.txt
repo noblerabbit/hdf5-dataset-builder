@@ -1,0 +1,1 @@
+This is what happens if there a non-image file in the folder
