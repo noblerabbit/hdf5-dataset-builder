@@ -1,68 +1,52 @@
-# HDF5 Image Dataset Builder
-
-Short scipts that procrsses images from supplied folder and stores them as a hdf5 data file.
-
-Processing functions are located in the customxy.py file.
-
-USAGE:
-0. clone the repo
-1. create virtual_env
-2. pip install requirments
-3.  run python main.py with arugments.
-4.  
+# HDF5 Image Dataset Builder (V.1.0)
 
 
 
+This scripts reads images from folder and procresses them through the custom processing function and stores them in a HDF5 file.
+
+HD5F is a file format that is optimized for quickly reading data from the file into memory (faster than is we read filed from the folder on the disk).
+It also provides a neat way of transporting data as a single file.
+
+*The main advantage of this script is that it enables custom processing functions to be integrated in the code
+without modification of the rest of the code. The outoup of processing function should be a dict with desired size of keys.*
+
+### Instructions ###
+
+**General**
+1. clone the repo
+2. install dependancies
+3. run *"python main.py"* to generate sample hdf5 dataset file
+4. run *"python inspect_file.py"* to get summary from the hdf5 dataset file
 
 
+**In terminal**
+> git clone https://github.com/noblerabbit/hdf5-dataset-builder.git
 
-HDF5 Image Database Builder for Deep Learning
+> cd noblerabbit/hdf5-dataset-builder
 
-Use this program if you want to organize and modify your images for deep learning...
+> pip install requirements.txt
 
+> python main.py
 
-- check system specs
-- anayse input foldr (nubmer of images etc)
-- estimate workload (ie seconds remaning)
-- 
-
-args: 
-path to images
-path to image description (json format, so it can be converted to python dictionary):
-                          if = None just store X
-                          if = json/convert
-                        
-new_image_name = 'same' or 'name'
-create_group = True (aka folder X, Y)
-
-#part of hdf5 is also original mapping, filenames back to image 
+> python inspect_file.py
 
 
-Make an application that takes folder to input images, and labels
+### Arguments ###
+**main.py (python main.py args):**
+* **-x** (Path to image folder; default:"test_images")
+* **-d** (tupple of width and height of the resized image; default: (256, 256)
+* **-func** (name of the processing function defined in customxy.py; default: "prepare_x_and_y")
+* **-img** (which image type to include. ie. ".jpg"; default: "" - all images)
+* **-sf** (path where to store hdf5 datafile; default: "test_hdf5_data/test_data.hdf5")
 
-processes them and saves them in the hdf5 file in compressed state.
+    > python main.py -x "test_images/"
 
-if no input is given then just compress x,
-or allow to provide the compressing function
+**inspect_file.py (python inspect_file.py)**
+* -f (provide path to hdft file for analysis: default: "test_hdf5_data/test_data.hdf5")
 
-input arg: size of the image
-
-// im MB size
-du -sh * - show image folders
-du --summary --human-readable *
-ls -l --block-size=M
-
-28MB - size - 5.127326965332031 seconds -with skimage
-28 MB - size - 1.0338988304138184 seconds - with cv2. cv2 is much faster
+    > python inspect_file.py -f "test_hdf5_data/test_data.hdf5"
 
 
-import time
-import curses
-
-def pbar(window):
-    for i in range(10):
-        window.addstr(10, 10, "[" + ("=" * i) + ">" + (" " * (10 - i )) + "]")
-        window.refresh()
-        time.sleep(0.5)
-
-curses.wrapper(pbar)
+### TODO ###
+- [ ] Add option to parse subfolders
+- [ ] Custom function example to parse category from filename and store it as Y

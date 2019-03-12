@@ -7,6 +7,7 @@ from skimage import io, color, transform
 import json
 import customxy
 import argparse
+import inspect_file
 
  # constrct the argument parser
 ap = argparse.ArgumentParser()
@@ -100,3 +101,4 @@ if __name__ == '__main__':
     main(getattr(customxy, PROC_FUNC))
     print("[SUMMARY] It took {} seconds to create the dataset.".format(round(time.time()-tic)))
     print(line)
+    inspect_file.inspect(DATAFILENAME)
