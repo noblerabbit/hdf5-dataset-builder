@@ -49,4 +49,7 @@ without modification of the rest of the code. The outoup of processing function 
 
 ### TODO ###
 - [ ] Add option to parse subfolders
-- [ ] Custom function example to parse category from filename and store it as Y
+- [ ] Custom function example to parse category from filename
+
+### License
+[MIT](https://choosealicense.com/licenses/mit/)
