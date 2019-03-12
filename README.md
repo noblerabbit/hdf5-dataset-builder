@@ -4,7 +4,7 @@
 ![Version: 1.0.2](https://img.shields.io/badge/version-1.0.0_-green.svg)
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
-**Use this script if you want to store images from a folder into a single hdf5 file. You also modify images before storing them in the dataset file.
+**Use this script if you want to store images from a folder into a single hdf5 file. You can modify images before storing them in the dataset file.
 Great way also to quickly create X,Y datasets for deep learning.**
 
 ### Desciption
